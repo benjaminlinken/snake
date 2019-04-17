@@ -7,6 +7,7 @@ from snake import snake
 
 BLACK = (0, 0, 0)
 WHILE = (255, 255, 255)
+RED = (255, 0, 0)
 ROWS = 255
 
 class game:
@@ -14,9 +15,22 @@ class game:
         self.level = 0
         self.score = 0
         self.snake = snake()
+        self.start_pos = []
+        self.fruitPos = []
         self.screen = pygame.display.set_mode((ROWS, ROWS))
     def start(self):
         self.drawscreen()
+
+    def check_status(self):
+        snake = self.snake
+        if snake.snakebody[0] == self.fruitPos:
+            return 1
+        if snake.snakebody[0] in snake.snakebody[1:]:
+            return -1
+        if snake.snakebody[0] in self.start_pos:
+            return -1
+        return 0
+
     def drawscreen(self):
         self.screen.fill(WHILE)
         scoreText = self.scoreFont.render(u'score: ' + str(self.score), True, BLACK)
@@ -46,21 +60,38 @@ class game:
         if 5 < self.level < 10:
             fX = random.randint(0, ROWS - 1)
             fY = random.randint(0, ROWS - 1)
-            star_poc = (fX, fY)
-            for i in range(5):
-                tmp = random.randint(0, 1)
-                if tmp == 0:
-                    fX = fX + 1
-                    star_poc.append(fX, fY)
-                else:
-                    fY = fY + 1
-                    star_poc.append(fX, fY)
+            self.start_pos.append((fX, fY))
+            tmp = []
+            while not tmp:
+                for i in range(5):
+                    tmp = random.randint(0, 1)
+                    if tmp == 0:
+                        fX = fX + 1
+                        self.start_pos.append(fX, fY)
+                    else:
+                        fY = fY + 1
+                        self.start_pos.append(fX, fY)
+                tmp = [val for val in self.start_poc if val in self.snake.snakebody]
+            for pos in self.start_poc:
+                pygame.draw.rect(self.screen, RED, (pos[0] * 20, pos[1] * 20, 20, 20))
 
         if self.level > 20:
             fX = random.randint(0, ROWS - 1)
             fY = random.randint(0, ROWS - 1)
-
-
+            self.start_pos.append((fX, fY))
+            tmp = []
+            while not tmp:
+                for i in range(10):
+                    tmp = random.randint(0, 1)
+                    if tmp == 0:
+                        fX = fX + 1
+                        self.start_pos.append(fX, fY)
+                    else:
+                        fY = fY + 1
+                        self.start_pos.append(fX, fY)
+                tmp = [val for val in self.start_poc if val in self.snake.snakebody]
+            for pos in self.start_poc:
+                pygame.draw.rect(self.screen, RED, (pos[0] * 20, pos[1] * 20, 20, 20))
 
 
 if __name__ == '__main__':
